@@ -1,19 +1,20 @@
 import dice as d
 import score as s
 
+
 class Player:
+    categories = ["ones", "twos", "threes", "fours", "fives", "sixes", "bonus", "Three of a kind",
+                  "Four of a kind", "Full house", "Small straight", "Large straight", "Chance", "Yahtzee"]
+    die = d.dice()
 
     def __init__(self, name="", ai_num = 0):
         self.name = name
-        self.die = d.dice()
         if self.name is "":
             self.name = "AI "
             self.name += str(ai_num)
-        self.categories = ["ones", "twos", "threes", "fours", "fives", "sixes", "bonus", "Three of a kind",
-                           "Four of a kind", "Full house", "Small straight", "Large straight", "Chance", "Yahtzee"]
-        self.scores = {x: -1 for x in self.categories}
+        self.scores = {x: -1 for x in Player.categories}
         self.total = 0
-        self.dieScore = s.score(self.die.setOfDie)
+        self.dieScore = s.score(Player.die.setOfDie)
         self.topHalfTotal = 0
 
     def total_score(self):
@@ -34,7 +35,7 @@ class Player:
 
     def print_score_card(self):
         print("---")
-        for x in self.categories:
+        for x in Player.categories:
             if self.scores[x] is -1:
                 print("%s:  ---" % (x))
             else:
@@ -44,25 +45,25 @@ class Player:
 
     def take_turn(self, turn):
         print(" It is now turn %i for %s." % (turn+1, self.name))
-        self.die.print_set()
+        Player.die.print_set()
         self.select_die()
-        self.die.print_set()
+        Player.die.print_set()
         self.select_die()
-        self.die.print_set()
-        self.dieScore = s.score(self.die.setOfDie)
+        Player.die.print_set()
+        self.dieScore = s.score(Player.die.setOfDie)
         # check if bonus Yahtzee
-        if self.die.setOfDie.count(self.die.setOfDie[1]) is 5 and self.scores["Yahtzee"] is 50:
+        if Player.die.setOfDie.count(Player.die.setOfDie[1]) is 5 and self.scores["Yahtzee"] is 50:
             if self.scores["bonus"] is -1:
                 self.scores["bonus"] = 100
             else:
                 self.scores["bonus"] += 100
         self.select_score()
         self.print_score_card()
-        self.die.roll_nums()
+        Player.die.roll_nums()
 
     def select_die(self):
         nums = raw_input("Which dice do you want to re-roll?  (press enter to not re-roll any die)")
-        self.die.roll_nums(nums)
+        Player.die.roll_nums(nums)
 
     def select_score(self):
         scored = False
@@ -106,8 +107,8 @@ class Player:
                                         self.scores["bonus"] += 35
                         break
                     i += 1
+
 class AI(Player):
     def select_die(self):
-        self.die.roll_nums()
-
+        Player.die.roll_nums()
 

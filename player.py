@@ -114,11 +114,50 @@ class Player:
 class AI(Player):
     def select_die(self):
         self.dieScore = s.score(Player.die.setOfDie)
+        count = {}
+        replace = []
+        for i in range(1, 7):
+            count.update({i: Player.die.setOfDie.count(i)})
+        print count
         if self.dieScore.scores["Large straight"] > 0 and self.scores["Large straight"] is -1:
-            Player.die.roll_nums("")
+            Player.die.ai_roll([])
+        if self.dieScore.scores["Small straight"] > 0 and (self.scores["Large straight"] is -1 or self.scores["Large straight"] is -1):
+            if 2 in count.values():
+                for i in count.keys():
+                    if count[i] is 2:
+                        Player.die.ai_roll([i])
+        if self.dieScore.scores["Full house"] > 0 and self.scores["Full house"] is -1:
+            Player.die.ai_roll([])
+        straight = []
+        last = 0
+        for i in range(1, 7):
+            if len(straight) is 0:
+               straight.append(i)
+            elif straight[len(straight)-1] + 1 is i:
+                straight.append(i)
+            elif len(straight) < 3:
+                straight = [i]
+        if len(straight) >= 4:
+            for i in Player.die.setOfDie:
+                if i not in straight:
+                    replace.append(i)
+            Player.die.ai_roll(replace)
+        if 3 in count.values() or 4 in count.values():
+            keep = 0
+            for (num, c) in count.items():
+                if c >= 3:
+                    keep = num
+            for i in Player.die.setOfDie:
+                if i is not keep:
+                    replace.append(i)
+            Player.die.ai_roll(replace)
+        if len(straight) is 3:
+            for i in Player.die.setOfDie:
+                if i not in straight:
+                    replace.append(i)
+            Player.die.ai_roll(replace)
         if self.dieScore.scores["Yahtzee"] > 0:
-            Player.die.roll_nums("")
-        Player.die.roll_nums()
+            Player.die.roll_nums([])
 
     def select_score(self):
         best_category = ""

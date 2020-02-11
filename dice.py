@@ -48,3 +48,13 @@ class dice():
                 self.setOfDie.pop(x)
                 self.setOfDie.insert(x, r.randint(1,6))
         self.setOfDie.sort()
+
+    def ai_roll(self, numSet = [0,1,2,3,4]) :
+        replace = []
+        for i in numSet:
+            replace.append(self.setOfDie.index(i))
+        print replace
+        for x in replace:
+            self.setOfDie.pop(x)
+            self.setOfDie.insert(x, r.randint(1,6))
+        self.setOfDie.sort()

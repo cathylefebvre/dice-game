@@ -5,6 +5,9 @@ import score as s
 class Player:
     categories = ["ones", "twos", "threes", "fours", "fives", "sixes", "bonus", "Three of a kind",
                   "Four of a kind", "Full house", "Small straight", "Large straight", "Chance", "Yahtzee"]
+    topHalfCategories =["ones", "twos", "threes", "fours", "fives", "sixes"]
+    bottomHalfCategories = ["Chance", "Three of a kind", "Four of a kind", "Full house",
+                            "Small straight", "Large straight", "Yahtzee"]
     die = d.dice()
 
     def __init__(self, name="", ai_num = 0):
@@ -97,7 +100,7 @@ class Player:
                         self.scores[x] = self.dieScore.scores[x]
                         scored = True
                         self.total += self.dieScore.scores[x]
-                        if category in ["ones", "twos", "threes", "fours", "fives", "sixes"]:
+                        if category in [Player.topHalfCategories]:
                             if self.topHalfTotal < 63:
                                 self.topHalfTotal += self.dieScore.scores[x]
                                 if self.topHalfTotal < 63:
@@ -110,5 +113,46 @@ class Player:
 
 class AI(Player):
     def select_die(self):
+        self.dieScore = s.score(Player.die.setOfDie)
+        if self.dieScore.scores["Large straight"] > 0 and self.scores["Large straight"] is -1:
+            Player.die.roll_nums("")
+        if self.dieScore.scores["Yahtzee"] > 0:
+            Player.die.roll_nums("")
         Player.die.roll_nums()
+
+    def select_score(self):
+        best_category = ""
+        bestScore = 0
+        for x in Player.bottomHalfCategories:
+            if self.dieScore.scores[x] >= bestScore and self.scores[x] is -1:
+                bestScore = self.dieScore.scores[x]
+                best_category = x
+                print x
+        bestCount = 0
+        if best_category is "Chance" or "":
+            for i in range(1, 7):
+                if Player.die.setOfDie.count(i) > bestCount and self.scores[Player.categories[i-1]] is -1:
+                    best_category = Player.categories[i-1]
+                    bestCount = Player.die.setOfDie.count(i)
+
+        if bestCount is 0 and bestScore is 0:
+            # score zero in the first available category
+            for x in Player.categories:
+                if self.scores[x] is -1 and x is not "bonus":
+                    best_category = x
+
+        self.scores[best_category] = self.dieScore.scores[best_category]
+        self.total += self.dieScore.scores[best_category]
+        if best_category in [Player.topHalfCategories]:
+            if self.topHalfTotal < 63:
+                self.topHalfTotal += self.dieScore.scores[x]
+                if self.topHalfTotal > 63:
+                    if self.scores["bonus"] is -1:
+                        self.scores["bonus"] = 35
+
+
+
+
+
+
 

@@ -36,6 +36,9 @@ class score():
         if self.pair and self.three:
             self.scores["Full house"] = 25
         self.scores["Chance"] = self.diceTotal
+        for x in  self.categories:
+            if self.scores[x] is -1:
+                self.scores[x] = 0
 
     def print_score(self, scoreCard):
         i = 1
